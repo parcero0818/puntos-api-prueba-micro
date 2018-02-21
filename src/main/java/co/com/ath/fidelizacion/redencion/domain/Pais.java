@@ -1,6 +1,7 @@
 package co.com.ath.fidelizacion.redencion.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 
 /**
  * Generic Request.
@@ -9,6 +10,7 @@ import javax.persistence.Entity;
 @Entity
 public class Pais {
 
+	@Id
     private int paId;
     private String paNombre;
 

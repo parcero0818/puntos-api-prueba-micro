@@ -1,6 +1,7 @@
 package co.com.ath.fidelizacion.redencion;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,6 +43,14 @@ public class RedencionApiApplicationTests {
     public void testEmployees() throws Exception {
         log.debug("[TEST] employees()");
         ResultActions resultActions = this.mvc.perform(post("/api/v1/restautnfilter").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        resultActions.andDo(print());
+    }
+    
+    @Test
+    public void testPaises() throws Exception {
+        log.debug("[TEST] employees()");
+        ResultActions resultActions = this.mvc.perform(get("/api/v1/paises").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         resultActions.andDo(print());
     }
