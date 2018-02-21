@@ -122,5 +122,17 @@
         </pluginRepository>
     </pluginRepositories>
 
-
+    <!-- Configuracion de manejo de distribucion de artefactos -->
+    <distributionManagement>
+        <repository>
+            <id>artifactory</id>
+            <name>Internal Releases</name>
+            <url>https://artifactory.pragma.com.co/artifactory/pragma-release</url>
+        </repository>
+        <snapshotRepository>
+            <id>artifactory</id>
+            <name>Internal Snapshots</name>
+            <url>https://artifactory.pragma.com.co/artifactory/pragma-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
