@@ -1,0 +1,9 @@
+server:
+  port: 1001
+
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@dbmed06:1522:dllo11g3
+    username: PORTAL_PAGOS
+    password: pagos
+    driver-class-name: oracle.jdbc.OracleDriver

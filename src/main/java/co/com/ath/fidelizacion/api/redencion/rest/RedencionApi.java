@@ -1,4 +1,4 @@
-package co.com.ath.fidelizacion.redencion.api;
+package co.com.ath.fidelizacion.api.redencion.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.com.ath.fidelizacion.redencion.domain.Pais;
-import co.com.ath.fidelizacion.redencion.domain.Response;
-import co.com.ath.fidelizacion.redencion.repository.Redencion;
+import co.com.ath.fidelizacion.api.redencion.domain.Pais;
+import co.com.ath.fidelizacion.api.redencion.domain.Response;
+import co.com.ath.fidelizacion.api.redencion.repository.Redencion;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 

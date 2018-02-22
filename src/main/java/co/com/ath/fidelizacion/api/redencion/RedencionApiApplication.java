@@ -1,4 +1,4 @@
-package co.com.ath.fidelizacion.redencion;
+package co.com.ath.fidelizacion.api.redencion;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

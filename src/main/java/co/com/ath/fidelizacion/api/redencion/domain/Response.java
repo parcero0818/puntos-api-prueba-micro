@@ -1,4 +1,4 @@
-package co.com.ath.fidelizacion.redencion.domain;
+package co.com.ath.fidelizacion.api.redencion.domain;
 
 /**
  * Generic Response.

@@ -1,9 +1,9 @@
-package co.com.ath.fidelizacion.redencion.repository;
+package co.com.ath.fidelizacion.api.redencion.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import co.com.ath.fidelizacion.redencion.domain.Pais;
+import co.com.ath.fidelizacion.api.redencion.domain.Pais;
 
 @Service
 public class RedencionImpl implements Redencion{

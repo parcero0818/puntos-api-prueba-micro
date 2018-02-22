@@ -1,4 +1,4 @@
-package co.com.ath.fidelizacion.redencion.domain;
+package co.com.ath.fidelizacion.api.redencion.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
