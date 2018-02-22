@@ -19,11 +19,16 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/api/v1")
 @Api(value = "Redención API", produces = "application/json")
 public class RedencionApi {
-	
-	@Autowired
-	Redencion redencion;
-	
+
     final private static Logger log = LoggerFactory.getLogger(RedencionApi.class);
+
+    private Redencion redencion;
+
+    @Autowired
+    public RedencionApi(Redencion redencion) {
+        super();
+        this.redencion = redencion;
+    }
 
     @PostMapping(value = "/restautnfilter")
     @ApiOperation(value = "restautnfilter", tags = "Redención API")
@@ -38,17 +43,11 @@ public class RedencionApi {
         log.info("[API - restautzfilter]");
         return new Response(200, "operacion exitosa", "{ 'mensaje': 'Filtro de Autenticación y Autorización' }");
     }
-    
+
     @GetMapping(value = "/paises")
     @ApiOperation(value = "paises", tags = "Redención API")
-    public String listaPaises() {
+    public @ResponseBody Iterable<Pais> listaPaises() {
         log.info("[API - paises]");
-        String paises = "";
-        Iterable<Pais> lista = redencion.listaPaises();
-        for (Pais listPais : lista) {
-			paises += listPais.getPaNombre() +"\n";
-		}
-        return paises;
+        return redencion.listaPaises();
     }
-    
 }

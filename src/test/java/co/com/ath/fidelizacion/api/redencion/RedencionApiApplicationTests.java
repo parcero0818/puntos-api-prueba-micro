@@ -1,4 +1,4 @@
-package co.com.ath.fidelizacion.redencion;
+package co.com.ath.fidelizacion.api.redencion;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
