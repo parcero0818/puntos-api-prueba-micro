@@ -75,15 +75,6 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
     <repositories>
         <repository>
             <id>spring-snapshots</id>
@@ -122,17 +113,25 @@
         </pluginRepository>
     </pluginRepositories>
 
-    <!-- Configuracion de manejo de distribucion de artefactos -->
     <distributionManagement>
         <repository>
-            <id>artifactory</id>
-            <name>Internal Releases</name>
-            <url>https://artifactory.pragma.com.co/artifactory/pragma-release</url>
+            <id>nexus</id>
+            <name>releases</name>
+            <url>http://devops01:8082/repository/pragma-releases/</url>
         </repository>
         <snapshotRepository>
-            <id>artifactory</id>
-            <name>Internal Snapshots</name>
-            <url>https://artifactory.pragma.com.co/artifactory/pragma-snapshot</url>
+            <id>nexus</id>
+            <name>snapshots</name>
+            <url>http://devops01:8082/repository/pragma-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
