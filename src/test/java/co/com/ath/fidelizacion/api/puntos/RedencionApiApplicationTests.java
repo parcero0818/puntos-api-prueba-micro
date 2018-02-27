@@ -1,4 +1,4 @@
-package co.com.ath.fidelizacion.api.redencion;
+package co.com.ath.fidelizacion.api.puntos;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -41,16 +41,8 @@ public class RedencionApiApplicationTests {
 
     @Test
     public void testEmployees() throws Exception {
-        log.debug("[TEST] employees()");
-        ResultActions resultActions = this.mvc.perform(post("/api/v1/restautnfilter").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-        resultActions.andDo(print());
-    }
-    
-    @Test
-    public void testPaises() throws Exception {
-        log.debug("[TEST] employees()");
-        ResultActions resultActions = this.mvc.perform(get("/api/v1/paises").contentType(MediaType.APPLICATION_JSON))
+        log.debug("[TEST] obtenerPropiedades()");
+        ResultActions resultActions = this.mvc.perform(post("/api/v1/obtenerPropiedades").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         resultActions.andDo(print());
     }
