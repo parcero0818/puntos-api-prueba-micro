@@ -1,13 +1,13 @@
 spring:
   application:
-     name: redencion-api
+     name: puntos-api
   datasource:
-    url: jdbc:oracle:thin:@dbmed06:1522:dllo11g3
-    username: PORTAL_PAGOS
-    password: pagos
+    url: jdbc:oracle:thin:@10.125.63.229:1521:ORCUTF8
+    username: ORAATHFIDELIZACIONDEV
+    password: ORAATHFIDELIZACIONDEV
     driver-class-name: oracle.jdbc.OracleDriver
 
 server:
   port: 1001
   servlet:
-    context-path: /redencion
+    context-path: /puntos

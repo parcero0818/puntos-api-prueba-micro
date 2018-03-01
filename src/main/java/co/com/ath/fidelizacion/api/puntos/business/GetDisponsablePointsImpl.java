@@ -9,103 +9,126 @@ import com.grupoaval.customers.v1.GetDisposablePointsRequest;
 import com.grupoaval.customers.v1.GetDisposablePointsResponse;
 import com.grupoaval.xsd.ifx.BankInfoType;
 import com.grupoaval.xsd.ifx.CustIdType;
+import com.grupoaval.xsd.ifx.GovIssueIdentType;
 import com.grupoaval.xsd.ifx.ListPartnerMemberStatusType;
 import com.grupoaval.xsd.ifx.LoyMemberPartnerInfoType;
 import com.grupoaval.xsd.ifx.MsgRqHdrType;
 import com.grupoaval.xsd.ifx.SecObjKeysType;
 
+import co.com.ath.fidelizacion.api.puntos.domain.BankInfo;
 import co.com.ath.fidelizacion.api.puntos.domain.DisposablePointsRq;
 import co.com.ath.fidelizacion.api.puntos.domain.DisposablePointsRs;
+import co.com.ath.fidelizacion.api.puntos.domain.MensajesModel;
 import co.com.ath.fidelizacion.api.puntos.domain.PartnerMemberStatusType;
 import co.com.ath.fidelizacion.api.puntos.domain.Status;
 import co.com.ath.fidelizacion.api.puntos.enums.RespuestaServicio;
+import co.com.ath.fidelizacion.api.puntos.repository.Mensajes;
 import co.com.ath.fidelizacion.api.puntos.repository.Propiedades;
-import co.com.ath.fidelizacion.wsclient.exception.TechnicalException;
 import co.com.ath.fidelizacion.wsclient.loyaltypointsadm.LoyaltyPointsAdmClient;
 import co.com.ath.fidelizacion.wsclient.loyaltypointsadm.LoyaltyPointsAdmClientImpl;
+import co.com.ath.fidelizacion.wsclient.loyaltypointsadm.exception.TechnicalException;
 
 @Service
 public class GetDisponsablePointsImpl implements GetDisponsablePoints {
 
     private static LoyaltyPointsAdmClient loyaltyPointsAdm;
 
-    Propiedades propiedades;
+    private Propiedades propiedades;
 
     @Autowired
-    public GetDisponsablePointsImpl(Propiedades propiedades) {
-        super();
-        this.propiedades = propiedades;
-    }
+    private Mensajes mensajes;
 
-    public GetDisponsablePointsImpl() {
-        String endpoint = this.propiedades.getEndPointLoyaltyPoints();
+    // @Autowired
+    // public GetDisponsablePointsImpl(Propiedades propiedades) {
+    // super();
+    // this.propiedades = propiedades;
+    // }
+
+    public GetDisponsablePointsImpl(Propiedades propiedades, Mensajes codigos) {
+        this.propiedades = propiedades;
+        this.mensajes = codigos;
+        String endpoint = propiedades.getEndPointLoyaltyPoints();
+        System.out.println("Endpoint" + endpoint);
         this.loyaltyPointsAdm = new LoyaltyPointsAdmClientImpl(endpoint);
     }
 
-    public DisposablePointsRs getDisponsablePoints(DisposablePointsRq request) throws TechnicalException {
+    public DisposablePointsRs getDisponsablePoints(DisposablePointsRq request) {
+        DisposablePointsRs response = new DisposablePointsRs();
+        GetDisposablePointsResponse responseWs = null;
+        Status status = new Status();
         try {
             GetDisposablePointsRequest requestWs = mapearRequestServicio(request);
-            ;
-
-            GetDisposablePointsResponse responseWs = this.loyaltyPointsAdm.getDisposablePoints(requestWs);
+            responseWs = this.loyaltyPointsAdm.getDisposablePoints(requestWs);
 
             if (responseWs.getDisposablePointsRs().getStatus().getStatusCode() == RespuestaServicio.SUCCESS.getStatusCode()) {
-                DisposablePointsRs response = mapearRespuestaServicio(responseWs);
+                mapearRespuestaServicio(responseWs, response);
                 return response;
             } else {
                 throw new TechnicalException();
             }
         } catch (TechnicalException ex) {
-            return null;
-        } catch (Exception e) {
-            return null;
+            if (responseWs != null) {
+                /* Se consulta en base de datos el codigo devuelto pro el servicio */
+                long codMsj = responseWs.getDisposablePointsRs().getStatus().getStatusCode();
+                status = obtenerMensaje(codMsj);
+                response.setStatusType(status);
+            } else {
+                status = obtenerMensaje(RespuestaServicio.ERROR_500.getStatusCode());
+                response.setStatusType(status);
+            }
+            return response;
         }
     }
 
     public GetDisposablePointsRequest mapearRequestServicio(DisposablePointsRq request) {
-        GetDisposablePointsRequest requestWs = new GetDisposablePointsRequest();
+        GetDisposablePointsRequest requestWs = null;
+        if (null != request) {
+            requestWs = new GetDisposablePointsRequest();
 
-        BankInfoType bankInfo = new BankInfoType();
-        bankInfo.setName(request.getMsgRqType().getBankInfo().getBankName());
-        bankInfo.setBankId(request.getMsgRqType().getBankInfo().getBankId());
+            MsgRqHdrType msgRqTypeWs = new MsgRqHdrType();
+            co.com.ath.fidelizacion.api.puntos.domain.MsgRqHdrType msgRqType = request.getMsgRqType();
+            if (null != msgRqType) {
 
-        MsgRqHdrType msgRqTypeWs = new MsgRqHdrType();
-        co.com.ath.fidelizacion.api.puntos.domain.MsgRqHdrType msgRqType = request.getMsgRqType();
+                BankInfoType bankInfoWs = new BankInfoType();
+                BankInfo bankInfo = msgRqType.getBankInfo();
 
-        msgRqTypeWs.setChannel(msgRqType.getChannel());
-        msgRqTypeWs.setBankInfo(bankInfo);
-        msgRqTypeWs.setClientDt(null);
-        msgRqTypeWs.setIPAddr(msgRqType.getIpAddr());
-        msgRqTypeWs.setReverse(msgRqType.isReverse());
-        msgRqTypeWs.setLanguage(msgRqType.getLanguage());
+                bankInfoWs.setName(bankInfo.getBankName());
+                bankInfoWs.setBankId(bankInfo.getBankId());
 
-        CustIdType custType = new CustIdType();
-        custType.setCustPermId(request.getCustPermId());
+                msgRqTypeWs.setChannel(msgRqType.getChannel());
+                msgRqTypeWs.setBankInfo(bankInfoWs);
+                msgRqTypeWs.setClientDt(null);
+                msgRqTypeWs.setIPAddr(msgRqType.getIpAddr());
+                msgRqTypeWs.setReverse(msgRqType.isReverse());
+                msgRqTypeWs.setLanguage(msgRqType.getLanguage());
 
-        SecObjKeysType secKeysType = new SecObjKeysType();
-        secKeysType.setSecurID(request.getSecObjKeysId());
+            }
+            CustIdType custType = new CustIdType();
+            custType.setCustPermId(request.getCustPermId());
 
-        DisposablePointsRqType disposablePointsRq = new DisposablePointsRqType();
-        disposablePointsRq.setRqUID(request.getRequestId());
-        disposablePointsRq.setMsgRqHdr(msgRqTypeWs);
-        disposablePointsRq.setCustId(custType);
-        disposablePointsRq.getGovIssueIdent().setGovIssueIdentType(request.getGoyIssueldendType());
-        disposablePointsRq.getGovIssueIdent().setIdentSerialNum(request.getIdentSeralNum());
-        disposablePointsRq.setSessKey(request.getSessKey());
-        disposablePointsRq.setSecObjKeys(secKeysType);
+            SecObjKeysType secKeysType = new SecObjKeysType();
+            secKeysType.setSecurID(request.getSecObjKeysId());
 
-        requestWs.setDisposablePointsRq(disposablePointsRq);
+            DisposablePointsRqType disposablePointsRq = new DisposablePointsRqType();
+            disposablePointsRq.setRqUID(request.getRequestId());
+            disposablePointsRq.setMsgRqHdr(msgRqTypeWs);
+            disposablePointsRq.setCustId(custType);
 
+            GovIssueIdentType govIssueIdent = new GovIssueIdentType();
+            govIssueIdent.setGovIssueIdentType(request.getGoyIssueldendType());
+            govIssueIdent.setIdentSerialNum(request.getIdentSeralNum());
+
+            disposablePointsRq.setGovIssueIdent(govIssueIdent);
+            ;
+            disposablePointsRq.setSessKey(request.getSessKey());
+            disposablePointsRq.setSecObjKeys(secKeysType);
+
+            requestWs.setDisposablePointsRq(disposablePointsRq);
+        }
         return requestWs;
     }
 
-    public DisposablePointsRs mapearRespuestaServicio(GetDisposablePointsResponse responseWs) {
-        DisposablePointsRs response = new DisposablePointsRs();
-        Status status = new Status();
-        status.setStatusCode(RespuestaServicio.SUCCESS.toString());
-        status.setStatusDesc(propiedades.getMensajeUsuario());
-        status.setServerStatusDesc(propiedades.getMensajeServicio());
-
+    public void mapearRespuestaServicio(GetDisposablePointsResponse responseWs, DisposablePointsRs response) {
         DisposablePointsRsType disponsablePoints = responseWs.getDisposablePointsRs();
         LoyMemberPartnerInfoType loyMemberInfoWs = disponsablePoints.getLoyMemberPartnerInfo().get(0);
         co.com.ath.fidelizacion.api.puntos.domain.LoyMemberPartnerInfoType loyMemberInfo = new co.com.ath.fidelizacion.api.puntos.domain.LoyMemberPartnerInfoType();
@@ -143,10 +166,29 @@ public class GetDisponsablePointsImpl implements GetDisponsablePoints {
         loyMemberInfo.setPartnerMemberStatus(partherMember);
 
         response.setLoyMemberPartnerInfo(loyMemberInfo);
+    }
 
-        response.setStatusType(status);
-
-        return response;
-
+    public Status obtenerMensaje(long codMensaje) {
+        MensajesModel mensaje = null;
+        Status status = new Status();
+        try {
+            mensaje = mensajes.findByCodMensaje(codMensaje);
+            if (null != mensaje) {
+                status.setStatusCode(String.valueOf(mensaje.getCodigoMensaje()));
+                status.setStatusDesc(mensaje.getMsjPantalla());
+                status.setStatusDesc(mensaje.getMsjTecnico());
+            } else {
+                throw new Exception();
+            }
+            return status;
+        } catch (Exception e) {
+            mensaje = mensajes.findByCodMensaje(RespuestaServicio.ERROR_500.getStatusCode());
+            if (null != mensaje) {
+                status.setStatusCode(String.valueOf(mensaje.getCodigoMensaje()));
+                status.setStatusDesc(mensaje.getMsjPantalla());
+                status.setStatusDesc(mensaje.getMsjTecnico());
+            }
+            return status;
+        }
     }
 }

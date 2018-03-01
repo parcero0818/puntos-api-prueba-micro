@@ -16,6 +16,7 @@ public class DisposablePointsRs implements Serializable {
     }
 
     public void setStatusType(Status status) {
+        this.status = status;
     }
 
     public LoyMemberPartnerInfoType getLoyMemberPartnerInfo() {

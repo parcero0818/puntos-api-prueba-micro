@@ -2,7 +2,7 @@ package co.com.ath.fidelizacion.api.puntos.business;
 
 import co.com.ath.fidelizacion.api.puntos.domain.DisposablePointsRq;
 import co.com.ath.fidelizacion.api.puntos.domain.DisposablePointsRs;
-import co.com.ath.fidelizacion.wsclient.exception.TechnicalException;
+import co.com.ath.fidelizacion.wsclient.loyaltypointsadm.exception.TechnicalException;
 
 /**
  * 
